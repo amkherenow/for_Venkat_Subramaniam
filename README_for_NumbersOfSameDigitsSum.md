@@ -53,3 +53,16 @@ during every run of findNums() :
 if 5400 is the incomplete number
 reject if it's > upper limit of numbers range
 or reject if 5499 is < lower limit of numbers range
+
+___________________________________
+Testing :
+Program takes # of tests in 1st line
+and 1 line per tests in the following lines
+on each line -- "expected sum of digits" "smallest number in the range" "largest number in the range"
+
+Example :
+1
+23 642 953
+
+There are 9 numbers in the range [642, 953], with 23 as the sum of digits.
+The numbers : [689, 698, 779, 788, 797, 869, 878, 887, 896]
