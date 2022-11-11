@@ -15,8 +15,8 @@ f(n, s) = Σf(n - 1, s - d) ∀d in [0,9]
 f(n, s): get the list of all numbers of lengths in the range [0,n], and sum of digits of each number 's'
 
 f(n-1, s-d): get all numbers in range [0,n-1], and sum of digits = s - d,
-  where d is a digit in the range [0,9]
-
+where d is a digit in the range [0,9]
+  
 ___________________________________
 Analysis :
 DP algo runs in O(nlogn) but recursive algo can be run in O(n) time. So, wrote the recursive algo in java functional programming style
