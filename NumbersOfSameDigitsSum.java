@@ -40,8 +40,8 @@ public class NumbersOfSameDigitsSum
 
     private void processFinalDigit(final int sumOfDigits, final long incompleteNum) {
         of(sumOfDigits)
-        .filter(digit -> digit <= 9)
-        .filter(digit -> digit >= 0)
+        .filter(sumOfDigits -> sumOfDigits <= 9)
+        .filter(sumOfDigits -> sumOfDigits >= 0)
         .map(digit -> incompleteNum + digit)
         .filter(completeNum -> completeNum <= largestNumInRange) 
         .filter(completeNum -> completeNum >= smallestNumInRange)
