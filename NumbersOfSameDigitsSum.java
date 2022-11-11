@@ -10,8 +10,8 @@ public class NumbersOfSameDigitsSum
 {
     // these 3 i/p values are effectively final, during the life of every test
     private int expectedSumOfDigits;
-    private int smallestNumInRange; 
-    private int largestNumInRange; 
+    private long smallestNumInRange; 
+    private long largestNumInRange; 
     private List<Long> optimalNums; // the numbers found during each test
 
     NumbersOfSameDigitsSum() {
@@ -23,8 +23,8 @@ public class NumbersOfSameDigitsSum
 
     private void solveProblem(Scanner scan) {
         expectedSumOfDigits = scan.nextInt();
-        smallestNumInRange = scan.nextInt();
-        largestNumInRange = scan.nextInt();
+        smallestNumInRange = scan.nextLong();
+        largestNumInRange = scan.nextLong();
         optimalNums = new ArrayList<>();
         // numMaxLen: number max length
         final int numMaxLen = 1 + (int) Math.floor(Math.log10(largestNumInRange));
@@ -40,8 +40,8 @@ public class NumbersOfSameDigitsSum
 
     private void processFinalDigit(final int sumOfDigits, final long incompleteNum) {
         of(sumOfDigits)
-        .filter(sumOfDigits -> sumOfDigits <= 9)
-        .filter(sumOfDigits -> sumOfDigits >= 0)
+        .filter(digit -> digit <= 9)
+        .filter(digit -> digit >= 0)
         .map(digit -> incompleteNum + digit)
         .filter(completeNum -> completeNum <= largestNumInRange) 
         .filter(completeNum -> completeNum >= smallestNumInRange)
