@@ -1,5 +1,6 @@
 import java.util.*;
 import java.util.stream.*;
+import java.util.function.*;
 import static java.util.stream.Stream.*;
 import static java.util.stream.Collectors.*;
 
@@ -52,10 +53,16 @@ public class NumbersOfSameDigitsSum
         // factor=1000 when numLen = 4 -- to fix the next digit in
         // appropriate position in potential final number
         final int factor = (int) Math.pow(10, numLen - 1);
+
+        Predicate<Long> checkUpperLimit =
+            newIncompleteNum -> (newIncompleteNum + factor - 1) >= smallestNumInRange;
+        Predicate<Long> checkLowerLimit =
+            newIncompleteNum -> newIncompleteNum <= largestNumInRange;
+
         IntStream.range(0, 10)
         .forEach(digit -> of(incompleteNum + digit * factor)
-            .filter(newIncompleteNum -> newIncompleteNum <= largestNumInRange) 
-            .filter(newIncompleteNum -> (newIncompleteNum + factor - 1) >= smallestNumInRange)
+            .filter(checkUpperLimit)
+            .filter(checkLowerLimit)
             .forEach(newIncompleteNum -> findNums(numLen - 1, sumOfDigits - digit, newIncompleteNum)));
     }
 
