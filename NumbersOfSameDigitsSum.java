@@ -9,6 +9,12 @@ import static java.util.stream.Collectors.*;
 // and using java functional programming style)
 public class NumbersOfSameDigitsSum
 {
+    private int expectedSumOfDigits;
+    private long smallestNumInRange;
+    private long largestNumInRange;
+    // to store the numbers found during each test
+    private List<Long> optimalNums;
+
     NumbersOfSameDigitsSum() {
         final Scanner read_ip = new Scanner(System.in);
         final int numberOfTests = read_ip.nextInt();
@@ -17,27 +23,22 @@ public class NumbersOfSameDigitsSum
     }
 
     private void solveProblem(Scanner read_ip) {
-        final int expectedSumOfDigits = read_ip.nextInt();
-        final long smallestNumInRange = read_ip.nextLong();
-        final long largestNumInRange = read_ip.nextLong();
-        // to store the numbers found during each test
-        final List<Long> optimalNums = new ArrayList<>();
+        expectedSumOfDigits = read_ip.nextInt();
+        smallestNumInRange = read_ip.nextLong();
+        largestNumInRange = read_ip.nextLong();
+        optimalNums = new ArrayList<>();
         final int numMaxLen = 1 + (int) Math.floor(Math.log10(largestNumInRange));
         // the recursive function
-        findNums(expectedSumOfDigits, smallestNumInRange, largestNumInRange, optimalNums, numMaxLen, expectedSumOfDigits, 0L);
-        prnOutput(expectedSumOfDigits, smallestNumInRange, largestNumInRange, optimalNums);
+        findNums(numMaxLen, expectedSumOfDigits, 0L);
+        prnOutput();
     }
 
-    private void findNums(final int expectedSumOfDigits, final long smallestNumInRange, final long largestNumInRange,
-                            final List<Long> optimalNums, final int numLen, final int sumOfDigits, final long incompleteNum) {
-        if (numLen == 1) processFinalDigit(expectedSumOfDigits, smallestNumInRange, largestNumInRange, optimalNums,
-                                            sumOfDigits, incompleteNum);
-        else processOtherDigits(expectedSumOfDigits, smallestNumInRange, largestNumInRange, optimalNums, numLen,
-                                sumOfDigits, incompleteNum);
+    private void findNums(final int numLen, final int sumOfDigits, final long incompleteNum) {
+        if (numLen == 1) processFinalDigit(sumOfDigits, incompleteNum);
+        else processOtherDigits(numLen, sumOfDigits, incompleteNum);
     }
 
-    private void processFinalDigit(final int expectedSumOfDigits, final long smallestNumInRange, final long largestNumInRange,
-                                    final List<Long> optimalNums, final int sumOfDigits, final long incompleteNum) {
+    private void processFinalDigit(final int sumOfDigits, final long incompleteNum) {
         of(sumOfDigits)
         .filter(digit -> digit <= 9)
         .filter(digit -> digit >= 0)
@@ -47,9 +48,7 @@ public class NumbersOfSameDigitsSum
         .forEach(optimalNums::add);
     }
 
-    private void processOtherDigits(final int expectedSumOfDigits, final long smallestNumInRange,
-                                    final long largestNumInRange, final List<Long> optimalNums,
-                                    final int numLen, final int sumOfDigits, final long incompleteNum) {
+    private void processOtherDigits(final int numLen, final int sumOfDigits, final long incompleteNum) {
         // factor=1000 when numLen = 4 -- to fix the next digit in
         // appropriate position in potential final number
         final int factor = (int) Math.pow(10, numLen - 1);
@@ -57,12 +56,10 @@ public class NumbersOfSameDigitsSum
         .forEach(digit -> of(incompleteNum + digit * factor)
             .filter(newIncompleteNum -> newIncompleteNum <= largestNumInRange) 
             .filter(newIncompleteNum -> (newIncompleteNum + factor - 1) >= smallestNumInRange)
-            .forEach(newIncompleteNum -> findNums(expectedSumOfDigits, smallestNumInRange, largestNumInRange,
-                                                    optimalNums, numLen - 1, sumOfDigits - digit, newIncompleteNum)));
+            .forEach(newIncompleteNum -> findNums(numLen - 1, sumOfDigits - digit, newIncompleteNum)));
     }
 
-    private void prnOutput(final int expectedSumOfDigits, final long smallestNumInRange,
-                            final long largestNumInRange, final List<Long> optimalNums) {
+    private void prnOutput() {
         System.out.printf("\nThere are %d numbers in the range [%d, %d], with %d as the sum of digits.\n",
             optimalNums.size(), smallestNumInRange, largestNumInRange, expectedSumOfDigits);
         System.out.printf("The numbers : %s\n", optimalNums);
