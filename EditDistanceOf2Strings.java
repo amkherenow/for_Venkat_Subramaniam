@@ -75,7 +75,7 @@ public class EditDistanceOf2Strings
         final int valAfterDeletingChar = 1 + memo.get(aIdx - 1).get(bIdx);
         final int valAfterReplacingChar = 1 + memo.get(aIdx - 1).get(bIdx - 1);
 
-        IntUnaryOperator ifReplaceCharRequired =
+        IntUnaryOperator ifReplaceCharNotRequired =
             editDist -> strA.charAt(aIdx - 1) == strB.charAt(bIdx - 1) ? editDist - 1 : editDist;
         IntUnaryOperator ifDelCharCheaper =
             editDist -> valAfterDeletingChar < editDist ? valAfterDeletingChar : editDist;
@@ -83,7 +83,7 @@ public class EditDistanceOf2Strings
             editDist -> valAfterAddingChar < editDist ? valAfterAddingChar : editDist;
 
         int newEditDist = IntStream.of(valAfterReplacingChar)
-            .map(ifReplaceCharRequired)
+            .map(ifReplaceCharNotRequired)
             .map(ifDelCharCheaper)
             .map(ifAddCharCheaper)
             .sum();
@@ -110,13 +110,13 @@ public class EditDistanceOf2Strings
                                                 ? 1 + memo.get(indices.aIdx - 1).get(indices.bIdx - 1)
                                                 : Integer.MAX_VALUE;
 
-        Predicate<Trio> areBothStringsEmpty =
+        Predicate<Trio> anyNonEmptyString =
             state -> (indices.aIdx != 0) || (indices.bIdx != 0);
         Function<Trio,Trio> initTransitionAsReplaceChar =
             state -> (indices.aIdx != 0) && (indices.bIdx != 0)
                             ? new Trio(indices.aIdx - 1, indices.bIdx - 1, valAfterReplacingChar)
                             : state;
-        Function<Trio,Trio> noReplaceCharIfCharsAreSame =
+        Function<Trio,Trio> ifReplaceCharNotRequired =
             state -> (indices.aIdx != 0) && (indices.bIdx != 0)
                         && (strA.charAt(state.aIdx) == strB.charAt(state.bIdx))
                             ? new Trio(state.aIdx, state.bIdx, state.editDist - 1)
@@ -131,9 +131,9 @@ public class EditDistanceOf2Strings
                             : state;
 
         return Stream.of(new Trio(-1, -1, Integer.MAX_VALUE))
-            .filter(areBothStringsEmpty)
+            .filter(anyNonEmptyString)
             .map(initTransitionAsReplaceChar)
-            .map(noReplaceCharIfCharsAreSame)
+            .map(ifReplaceCharNotRequired)
             .map(ifAddCharCheaper)
             .map(ifDelCharCheaper)
             .map(state -> new Duo(state.aIdx, state.bIdx))
