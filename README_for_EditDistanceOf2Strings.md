@@ -87,15 +87,9 @@ The indices pairs representing the transitions :
 
 (from "print transitions" OP)
 The transitions...
-
 pqqrst
-
 replace:  qqqrst
-
 replace:  qqtrst
-
 replace:  qqttst
-
 replace:  qqttpt
-
 replace:  qqttps
