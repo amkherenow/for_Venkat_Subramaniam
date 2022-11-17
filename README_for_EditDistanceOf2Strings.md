@@ -44,10 +44,6 @@ and then the min() function would include f(x-1, y-1) for the "replace char" sit
 
 -- After the entire memo table is filled, f(A,B) represents the edit distance
 
-Example: 
-A=pqqrst, B=qqttps
-Edit Distance = f(6,6) = 5
-
 
 #2: Find the character transitions
 -- Start from indices pair (A,B). Add at the front of a deque. Stop when we reach (0,0)
@@ -77,3 +73,23 @@ Fetch the character at position y2 in 2nd string, and add at position x2 in 1st 
 -- If the transition represents character replacement :
 Fetch the character at position y2 in 2nd string, and replace the character at position x2 in 1st string, and print 1st string, along with the tag "replace"
 
+
+Example :
+Input: A=pqqrst, B=qqttps
+
+Output :
+(from memo table -- f(A,B))
+5 is the edit distance from string "pqqrst" to string "qqttps".
+
+(from "find transitions" OP)
+The indices pairs representing the transitions :
+[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)]
+
+(from "print transitions" OP)
+The transitions...
+pqqrst
+replace:  qqqrst
+replace:  qqtrst
+replace:  qqttst
+replace:  qqttpt
+replace:  qqttps
