@@ -53,11 +53,11 @@ public class EditDistanceOf2Strings
     }
 
     private void dp() {
-        dpAtleast1EmptyString();
+        dpAtleastOneEmptyString();
         dpNonEmptyStrings();
     }
 
-    private void dpAtleast1EmptyString() {
+    private void dpAtleastOneEmptyString() {
         IntStream.range(0, memo.size())
             .forEach(aIdx -> memo.get(aIdx).set(0, aIdx));
         IntStream.range(1, memo.get(0).size())
@@ -154,23 +154,28 @@ public class EditDistanceOf2Strings
         pln("%s", strA);
 
         transitions.stream()
-            .reduce((indices1, indices2) -> {
-                if ((indices2.aIdx == indices1.aIdx + 1) && (indices2.bIdx == indices1.bIdx + 1)) {
-                    if (strA.charAt(indices1.aIdx) == strB.charAt(indices1.bIdx))
-                        return indices2;
-                    else {
-                        str_arr[indices2.aIdx] = strB.charAt(indices1.bIdx) + str_arr[indices2.aIdx].substring(1);
-                        p("replace: ");
-                    }
-                } else if (indices2.aIdx == indices1.aIdx + 1) {
-                    str_arr[indices2.aIdx] = str_arr[indices2.aIdx].substring(1);
-                    p("delete: ");
-                } else {
-                    str_arr[indices2.aIdx] += strB.charAt(indices1.bIdx);
-                    p("add: ");
-                }
-                pln("%s", String.join("", str_arr));
-                return indices2; });
+            .reduce((indices1, indices2) -> printNextTransition(indices1, indices2, str_arr));
+    }
+
+    private Duo printNextTransition(Duo indices1, Duo indices2, String[] str_arr) {
+        if ((indices2.aIdx == indices1.aIdx + 1) && (indices2.bIdx == indices1.bIdx + 1)) {
+            if (strA.charAt(indices1.aIdx) == strB.charAt(indices1.bIdx))
+                return indices2;
+            else {
+                str_arr[indices2.aIdx] =    strB.charAt(indices1.bIdx)
+                                            + str_arr[indices2.aIdx].substring(1);
+                p("replace: ");
+            }
+        } else if (indices2.aIdx == indices1.aIdx + 1) {
+            str_arr[indices2.aIdx] = str_arr[indices2.aIdx].substring(1);
+            p("delete: ");
+        } else {
+            str_arr[indices2.aIdx] += strB.charAt(indices1.bIdx);
+            p("add: ");
+        }
+
+        pln("%s", String.join("", str_arr));
+        return indices2;
     }
 
     private void debug() {
