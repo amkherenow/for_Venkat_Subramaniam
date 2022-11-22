@@ -158,24 +158,66 @@ public class EditDistanceOf2Strings
     }
 
     private Duo printNextTransition(Duo indices1, Duo indices2, String[] str_arr) {
-        if ((indices2.aIdx == indices1.aIdx + 1) && (indices2.bIdx == indices1.bIdx + 1)) {
-            if (strA.charAt(indices1.aIdx) == strB.charAt(indices1.bIdx))
-                return indices2;
-            else {
-                str_arr[indices2.aIdx] =    strB.charAt(indices1.bIdx)
-                                            + str_arr[indices2.aIdx].substring(1);
-                p("replace: ");
-            }
-        } else if (indices2.aIdx == indices1.aIdx + 1) {
-            str_arr[indices2.aIdx] = str_arr[indices2.aIdx].substring(1);
-            p("delete: ");
-        } else {
-            str_arr[indices2.aIdx] += strB.charAt(indices1.bIdx);
-            p("add: ");
-        }
+        Predicate<Integer> aIdxCompare = dummyInt -> indices2.aIdx == indices1.aIdx + 1;
 
-        pln("%s", String.join("", str_arr));
+        Predicate<Integer> bIdxCompare = dummyInt -> indices2.bIdx == indices1.bIdx + 1;
+
+        Predicate<Integer> compareBothIndexPairs = aIdxCompare.and(bIdxCompare);
+
+        Predicate<Integer> strsCharCompare = dummyInt ->
+            strA.charAt(indices1.aIdx) != strB.charAt(indices1.bIdx);
+
+        Function<Integer, Integer> replaceChar = dummyInt -> {
+            str_arr[indices2.aIdx] = strB.charAt(indices1.bIdx)
+                                     + str_arr[indices2.aIdx].substring(1);
+            pln("replace: %s", String.join("", str_arr));
+            return 1;
+        };
+
+        Function<Integer, Integer> delChar = dummyInt -> {
+            str_arr[indices2.aIdx] = str_arr[indices2.aIdx].substring(1);
+            pln("delete: %s", String.join("", str_arr));
+            return 1;
+        };
+
+        Function<Integer, Integer> addChar = dummyInt -> {
+            str_arr[indices2.aIdx] += strB.charAt(indices1.bIdx);
+            pln("add: %s", String.join("", str_arr));
+            return 1;
+        };
+
+        if (compareBothIndexPairs.test(1)) {
+            if (strsCharCompare.test(1))
+                replaceChar.apply(1);
+        } else if (aIdxCompare.test(1))
+            delChar.apply(1);
+        else
+            addChar.apply(1);
+
         return indices2;
+
+        /*
+        // replace char situation
+        boolean isCharReplaced = of(1)
+            .filter(compareBothIndexPairs)
+            .filter(strsCharCompare)
+            .map(replaceChar)
+            .findFirst()
+            .isPresent();
+
+        // delete char situation
+        boolean isCharDeleted = !isCharReplaced && of(1)
+            .filter(aIdxCompare)
+            .map(delChar)
+            .findFirst()
+            .isPresent();
+
+        // add char situation
+        boolean isCharAdded = !isCharDeleted && of(1)
+            .map(addChar)
+            .findFirst()
+            .isPresent();
+            */
     }
 
     private void debug() {
