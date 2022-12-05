@@ -172,7 +172,7 @@ public class EditDistanceTransitions
 
         IntStream.rangeClosed(1, transitionPairs.size())
             .map(index -> transitionPairs.size() - index)
-            .mapToObj(reverseIdx -> transitionPairs.get(reverseIdx))
+            .mapToObj(transitionPairs::get)
             .map(this::computeNextTransitionOfString1)
             .forEach(System.out::println);
     }
