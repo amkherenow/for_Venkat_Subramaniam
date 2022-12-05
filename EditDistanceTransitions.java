@@ -166,15 +166,14 @@ public class EditDistanceTransitions
                 .collect(toList());
         //System.out.printf("\nThe List of Transition Pairs :\n %s\n", transitionPairs);
 
+        System.out.printf("\nString \"%s\" underwent below transitions to become \"%s\"\n", string1, string2);
+
         arrayString1 = " ".concat(string1).split("");
 
-        List<String> transitionsOfString1 = IntStream.rangeClosed(1, transitionPairs.size())
+        IntStream.rangeClosed(1, transitionPairs.size())
             .map(index -> transitionPairs.size() - index)
             .mapToObj(reverseIdx -> transitionPairs.get(reverseIdx))
             .map(this::computeNextTransitionOfString1)
-            .collect(toList());
-        System.out.printf("\nString \"%s\" underwent below transitions to become \"%s\"\n", string1, string2);
-        transitionsOfString1.stream()
             .forEach(System.out::println);
     }
 
