@@ -27,7 +27,7 @@ public class EditDistanceTransitions
     private String string2;
     private EditDistance editdistanceObj;
     private Map<EditDistance.StringLengthsAsKey, Integer> matrixMap;
-    private List<Transition> transitions;
+    private Deque<Transition> transitions;
     private String[] arrayString1;
 
     private interface TailCall<T>
@@ -68,14 +68,14 @@ public class EditDistanceTransitions
         this.matrixMap = matrixMap;
         this.string1 = string1;
         this.string2 = string2;
-        transitions = new ArrayList<>();
+        transitions = new ArrayDeque<>();
     }
 
     private void traceTransitions() {
         final Transition zeroethTransition =
             traceNextTransition(new Transition(string1.length(), string2.length()))
             .invoke();
-        transitions.add(zeroethTransition);
+        transitions.addFirst(zeroethTransition);
     }
 
     private TailCall<Transition> traceNextTransition(final Transition trans) {
@@ -148,7 +148,7 @@ public class EditDistanceTransitions
 
         if ((lenStr1 == 0) || (lenStr2 == 0) || !checkEndCharacterObj.call()
                 || (checkEndCharacterObj.call() && (replaceChar == false)))
-            transitions.add(trans);
+            transitions.addFirst(trans);
 
         return traceNextTransition(newTrans);
     }
@@ -162,7 +162,7 @@ public class EditDistanceTransitions
         Iterator<Transition> iter = transitions.stream().iterator();
         List<TwinTrans> transitionPairs = transitions.stream()
                 .skip(1)
-                .map(trans -> new TwinTrans(trans, iter.next()))
+                .map(trans -> new TwinTrans(iter.next(), trans))
                 .collect(toList());
         //System.out.printf("\nThe List of Transition Pairs :\n %s\n", transitionPairs);
 
@@ -170,8 +170,7 @@ public class EditDistanceTransitions
 
         arrayString1 = " ".concat(string1).split("");
 
-        IntStream.rangeClosed(1, transitionPairs.size())
-            .map(index -> transitionPairs.size() - index)
+        IntStream.range(0, transitionPairs.size())
             .mapToObj(transitionPairs::get)
             .map(this::computeNextTransitionOfString1)
             .forEach(System.out::println);
